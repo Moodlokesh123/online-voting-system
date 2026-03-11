@@ -1,21 +1,37 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Voter Login</title>
+
     <link rel="stylesheet" href="{% static 'style.css' %}">
     <script src="{% static 'script.js' %}" defer></script>
 </head>
-<body class="auth-page">
 
+<body class="auth-page">
 
 <div class="container">
     <h1>Voter Login</h1>
 
-    <form id="loginForm">
+    <!-- ✅ method added (CRITICAL) -->
+    <form id="loginForm" method="POST">
         {% csrf_token %}
-        <input type="text" name="username" placeholder="Voter ID / Username" required>
-        <input type="password" name="password" placeholder="Password / PIN" required>
+
+        <input 
+            type="text" 
+            name="username" 
+            placeholder="Voter ID / Username" 
+            required
+        >
+
+        <input 
+            type="password" 
+            name="password" 
+            placeholder="Password / PIN" 
+            required
+        >
+
         <button type="submit">Login</button>
     </form>
 

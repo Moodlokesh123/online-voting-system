@@ -12,35 +12,16 @@ function getCookie(name) {
         document.cookie.split(";").forEach(cookie => {
             cookie = cookie.trim();
             if (cookie.startsWith(name + "=")) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                cookieValue = decodeURIComponent(
+                    cookie.substring(name.length + 1)
+                );
             }
         });
     }
     return cookieValue;
 }
 
-/* =========================
-   VOTE SUCCESS ANIMATION
-========================= */
-function showVoteSuccessAnimation(message) {
-    const overlay = document.createElement("div");
-    overlay.id = "vote-success-overlay";
-
-    overlay.innerHTML = `
-        <div class="success-box">
-            <div class="checkmark">✓</div>
-            <h2>Vote Successful</h2>
-            <p>${message}</p>
-        </div>
-    `;
-
-    document.body.appendChild(overlay);
-
-    // Auto redirect after animation
-    setTimeout(() => {
-        window.location.href = "/results/";
-    }, 2500);
-}
+const csrftoken = getCookie("csrftoken");
 
 /* =========================
    REGISTRATION FORM
@@ -74,9 +55,11 @@ if (registrationForm) {
         fetch("/register-user/", {
             method: "POST",
             headers: {
-                "X-CSRFToken": getCookie("csrftoken")
+                "X-CSRFToken": csrftoken
             },
-            body: formData
+            body: formData,
+            credentials: "same-origin"
+// 🔥 REQUIRED FOR RAILWAY
         })
         .then(res => res.json())
         .then(data => {
@@ -106,15 +89,17 @@ if (loginForm) {
         fetch("/login-user/", {
             method: "POST",
             headers: {
-                "X-CSRFToken": getCookie("csrftoken")
+                "X-CSRFToken": csrftoken
             },
-            body: formData
+            body: formData,
+            credentials: "same-origin"
+
         })
         .then(res => res.json())
         .then(data => {
             alert(data.message);
             if (data.success) {
-                window.location.href = "/dashboard/";
+                window.location.href = data.redirect_url || "/dashboard/";
             }
         })
         .catch(err => {
@@ -125,7 +110,7 @@ if (loginForm) {
 }
 
 /* =========================
-   VOTING FORM (WITH ANIMATION)
+   VOTING FORM
 ========================= */
 const voteForm = document.getElementById("voteForm");
 
@@ -158,31 +143,27 @@ if (voteForm) {
         fetch("/submit-vote/", {
             method: "POST",
             headers: {
-                "X-CSRFToken": getCookie("csrftoken")
+                "X-CSRFToken": csrftoken
             },
-            body: formData
+            body: formData,
+           credentials: "same-origin"
+
         })
         .then(res => res.json())
         .then(data => {
-    if (data.status === "success") {
-        submitButton.innerText = "Voted ✅";
-
-        // 🎉 Confetti animation
-        launchConfetti();
-
-        // ⏱ Redirect after animation
-        setTimeout(() => {
-            window.location.href = "/results/";
-        }, 2500);
-
-    } else {
-        alert(data.message);
-        submitButton.disabled = false;
-        submitButton.innerText = "Vote";
-        voteInProgress = false;
-    }
-})
-
+            if (data.status === "success") {
+                submitButton.innerText = "Voted ✅";
+                launchConfetti();
+                setTimeout(() => {
+                    window.location.href = "/results/";
+                }, 2500);
+            } else {
+                alert(data.message);
+                submitButton.disabled = false;
+                submitButton.innerText = "Vote";
+                voteInProgress = false;
+            }
+        })
         .catch(err => {
             console.error("Vote Error:", err);
             alert("Something went wrong while voting");
@@ -192,6 +173,7 @@ if (voteForm) {
         });
     });
 }
+
 /* =========================
    CONFETTI FUNCTION
 ========================= */

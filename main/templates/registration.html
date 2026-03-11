@@ -12,13 +12,14 @@
     <!-- JS -->
     <script src="{% static 'script.js' %}" defer></script>
 </head>
-<body class="auth-page">
 
+<body class="auth-page">
 
 <div class="container">
     <h1>Voter Registration</h1>
 
-    <form id="registrationForm">
+    <!-- ✅ method POST is REQUIRED -->
+    <form id="registrationForm" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
         <!-- Personal Details -->
@@ -28,31 +29,34 @@
 
         <select name="gender" required>
             <option value="">Select Gender</option>
-            <option>Male</option>
-            <option>Female</option>
-            <option>Other</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
         </select>
 
         <input type="date" name="dob" id="dob" required>
         <input type="text" id="age" placeholder="Age" readonly>
+
         <input type="text" name="nationality" placeholder="Nationality / Citizenship" required>
+
         <input
-  type="text"
-  name="govt_voter_id"
-  id="govt_voter_id"
-  placeholder="Govt Voter ID"
-  required
->
+            type="text"
+            name="govt_voter_id"
+            id="govt_voter_id"
+            placeholder="Govt Voter ID"
+            required
+        >
 
         <!-- Identity Details -->
         <h2>Identity Details</h2>
         <select name="id_type" required>
             <option value="">ID Proof Type</option>
-            <option>Aadhaar</option>
-            <option>Passport</option>
-            <option>Driving License</option>
-            <option>PAN</option>
+            <option value="Aadhaar">Aadhaar</option>
+            <option value="Passport">Passport</option>
+            <option value="Driving License">Driving License</option>
+            <option value="PAN">PAN</option>
         </select>
+
         <input type="text" name="id_number" placeholder="ID Proof Number" required>
 
         <!-- Address Details -->
@@ -71,26 +75,12 @@
         <input type="email" name="email" placeholder="Email Address">
 
         <!-- Login Details -->
-       <!-- Login Details -->
-<h2>Login Details</h2>
+        <h2>Login Details</h2>
+        <input type="text" name="username" placeholder="Username / Voter ID" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
 
-<input type="text"
-       name="username"
-       placeholder="Username / Voter ID"
-       required>
-
-<input type="password"
-       name="password"
-       placeholder="Password"
-       required>
-
-<input type="password"
-       name="confirm_password"
-       placeholder="Confirm Password"
-       required>
-
-
-        <!-- Document Upload (UI only for now) -->
+        <!-- Document Upload (UI only) -->
         <h2>Document Upload</h2>
         <label>Passport Photo</label>
         <input type="file" name="photo">
@@ -107,10 +97,12 @@
             <input type="checkbox" required>
             I declare that I am 18 years or above
         </label>
+
         <label class="checkbox">
             <input type="checkbox" required>
             I am a citizen and not registered elsewhere
         </label>
+
         <label class="checkbox">
             <input type="checkbox" required>
             I accept the Terms & Conditions
